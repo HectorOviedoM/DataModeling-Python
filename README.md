@@ -8,10 +8,16 @@ Pasos para cumplir con la petición:
 
 
 1-usando la tabla de origen crearía las tablas dimensiones DIMUSUARIOS, DIMEVENTO , DIMSEGMENTO y DIMSESSION, y una tabla de hecho FactSesiónes.
-•	La tabla de hecho tendría: USER_ID, EVENT_ID , SEGMENT_ID Y SESSION_ID como FK, crash_detection y time_spent 
+
+
+•	La tabla de hecho tendría: USER_ID, EVENT_ID , SEGMENT_ID Y SESSION_ID como FK, crash_detection y time_spent
+
 •	La tabla de DIMUSUARIOS tendría user_id como clave principal, user_city
+
 •	La tabla DIMEVENTO tendría EVENT_ID como clave principal, server_time y evento_description
+
 •	La tabla DIMSESSION tendría SESSION_ID como clave principal, device_browser , device_movile y device_os
+
 •	La tabla DIMSEGMENTO tendría SEGMENT_ID como clave principal , segment_description
 
 
@@ -32,21 +38,26 @@ En caso de necesitarlo se crea la tabla origen en postgres y se cargan los datos
 CREATE TABLE origin_table (user_id serial PRIMARY KEY,session_id int UNIQUE NULL,segment_id int UNIQUE NULL,segment_description VARCHAR(100) NULL,	user_city VARCHAR(100) NULL,server_time TIMESTAMP NULL,device_browser VARCHAR ( 50 ) NULL,device_os VARCHAR ( 50 ) NULL,device_mobile VARCHAR ( 50 ) NULL,time_spent int null,event_id int UNIQUE NULL,event_description VARCHAR(100) NULL,crash_detection VARCHAR(100) NULL);
 
 Teniendo los datos cargados en PostgreSQL:
+
 •	create table dimusuarios (
      			user_id serial primary key,
      			user_city text not null);
+			
 •	create table dimevento (
      			event_id serial primary key,
      			server_time date not null,
      			evento_description text not null);
+			
 •	create table dimsegmento (
      			segment_id serial primary key,
      			segment_description text not null);
+			
 •	create table dimsession (
      			sesión_id serial primary key,
      			device_os text not null default 'unknown',
      			device_browser text not null,
 			device_movile text not null);
+			
 •	create table factsessiones ( user_id integer references dimusuarios, 
 			       event_id integer references dimevento,  
                                                     segment_id integer references dimsegmento,
@@ -54,23 +65,31 @@ Teniendo los datos cargados en PostgreSQL:
                                                    time_spent integer, 
                                                    crash_detection text,  
                                                   constraint pk primary key (user, event_id,segment_id,sesion_id))
+						  
 
 •	inserts:
+
 o	INSERT INTO dimevento (event_id, server_time, evento_description)
 SELECT event_id, server_time, event_description FROM origin_table
+
 o	INSERT INTO dimsession (sesión_id,device_os,device_browser,device_movile)
 SELECT session_id,device_os,device_browser,device_mobile FROM origin_table;
+
 o	INSERT INTO dimsegmento (segment_id,segment_description) SELECT segment_id,segment_description FROM origin_table;
+
 o	INSERT INTO dimusuarios(user_id,user_city) SELECT user_id,user_city FROM origin_table;
 
 
+
 Ejercicio 3:
+
 SELECT  user_id,count(session_id) FROM dimevento INNER JOIN factsessiones ON dimevento.event_id = factsessiones.event_id where date_part('month',server_time) = date_part('month',CURRENT_DATE) group by user_id  limit 10  ;
 
 
 
 Pregunta 2
 ¿Qué parámetros de spark tendría en cuenta a la hora de realizar dicha ingesta? Explique brevemente en que consta cada uno de ellos. ¿En qué formato de compresión escribiría los resultados? ¿Por qué?
+
 
 Al momento de realizar dicha ingesta tendría en cuenta la cantidad de ejecutores(spark.executor.instances), la cantidad de memoria utilizada por cada ejecutor(spark.executor.memory), y los núcleos de cada ejecutor (spark.executor.cores) 
 Por otro lado , sobre el formato del archivo, Lo escribiría en formato avro ya que hay relativamente poca cantidad de columnas por lo que ser un formato orientado a filas no es una desventaja , es adecuado para operaciones de escritura intensiva como la que necesitamos y puede ser utilizado en procesos streamming en caso de necesitarlo.
