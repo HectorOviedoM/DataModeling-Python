@@ -1,9 +1,9 @@
 # DataModeling-Python
 
-Data Engineer Programming Test
+## Data Engineer Programming Test
 
-Pregunta 1
-1-Como resolvería este tipo de petición? Explique detalladamente el proceso de limpieza y transformación del modelo inicial. ¿Qué tecnologías utilizaría y por qué?
+#### Pregunta 1
+##### 1-Como resolvería este tipo de petición? Explique detalladamente el proceso de limpieza y transformación del modelo inicial. ¿Qué tecnologías utilizaría y por qué?
 Pasos para cumplir con la petición:
 
 
@@ -26,14 +26,14 @@ En caso de tener que mover la tabla de origen optaría por spark(pyspark) ya que
 
 
 
-Ejercicio 1                
+##### Ejercicio 1                
 Realice el DER que de soporte al modelo dimensional solicitado por la banca privada.
 
 ![image](https://user-images.githubusercontent.com/63317932/157447080-d5703e99-fd7a-40d3-8f02-81be8f45cbd7.png)
 
  
 
-Ejercicio 2
+##### Ejercicio 2
 En caso de necesitarlo se crea la tabla origen en postgres y se cargan los datos con python/pyspark:
 CREATE TABLE origin_table (user_id serial PRIMARY KEY,session_id int UNIQUE NULL,segment_id int UNIQUE NULL,segment_description VARCHAR(100) NULL,	user_city VARCHAR(100) NULL,server_time TIMESTAMP NULL,device_browser VARCHAR ( 50 ) NULL,device_os VARCHAR ( 50 ) NULL,device_mobile VARCHAR ( 50 ) NULL,time_spent int null,event_id int UNIQUE NULL,event_description VARCHAR(100) NULL,crash_detection VARCHAR(100) NULL);
 
@@ -82,13 +82,13 @@ o	INSERT INTO dimusuarios(user_id,user_city) SELECT user_id,user_city FROM origi
 
 
 
-Ejercicio 3:
+##### Ejercicio 3:
 
 SELECT  user_id,count(session_id) FROM dimevento INNER JOIN factsessiones ON dimevento.event_id = factsessiones.event_id where date_part('month',server_time) = date_part('month',CURRENT_DATE) group by user_id  limit 10  ;
 
 
 
-Pregunta 2
+##### Pregunta 2
 ¿Qué parámetros de spark tendría en cuenta a la hora de realizar dicha ingesta? Explique brevemente en que consta cada uno de ellos. ¿En qué formato de compresión escribiría los resultados? ¿Por qué?
 
 
@@ -97,7 +97,7 @@ Al momento de realizar dicha ingesta tendría en cuenta principalmente las confi
 Por otro lado , sobre el formato del archivo, Lo escribiría en formato avro ya que hay relativamente poca cantidad de columnas por lo que ser un formato orientado a filas no es una desventaja , es adecuado para operaciones de escritura intensiva como la que necesitamos y puede ser utilizado en procesos streamming en caso de necesitarlo. en caso de no utilizar avro me inclinaria por el formato parquet.
 
 
-Pregunta 3
+##### Pregunta 3
 Describa brevemente que implementaría para garantizar la confiabilidad de los datos.
 
 hablando en forma general implementaría test de calidad de datos, con esto me refiero a someter a diferentes tablas de mi datawarehouse a pruebas para verificar que ,por ejemplo, una columna no tenga nulos o que sus valores sean unicos en caso de que debieran serlos.
