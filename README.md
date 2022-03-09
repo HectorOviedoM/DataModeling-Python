@@ -5,12 +5,16 @@ Data Engineer Programming Test
 Pregunta 1
 1-Como resolvería este tipo de petición? Explique detalladamente el proceso de limpieza y transformación del modelo inicial. ¿Qué tecnologías utilizaría y por qué?
 Pasos para cumplir con la petición:
+
+
 1-usando la tabla de origen crearía las tablas dimensiones DIMUSUARIOS, DIMEVENTO , DIMSEGMENTO y DIMSESSION, y una tabla de hecho FactSesiónes.
 •	La tabla de hecho tendría: USER_ID, EVENT_ID , SEGMENT_ID Y SESSION_ID como FK, crash_detection y time_spent 
 •	La tabla de DIMUSUARIOS tendría user_id como clave principal, user_city
 •	La tabla DIMEVENTO tendría EVENT_ID como clave principal, server_time y evento_description
 •	La tabla DIMSESSION tendría SESSION_ID como clave principal, device_browser , device_movile y device_os
 •	La tabla DIMSEGMENTO tendría SEGMENT_ID como clave principal , segment_description
+
+
 2- a nivel general utilizaría una base de datos relacional, por cuestión de performance, más robusta , mejores features y ser open Source elegiría PostgreSQL por sobre otros gestores. 
 En caso de tener que mover la tabla de origen optaría por spark(pyspark) ya que sqoop,que es una herramienta ideal para esto, esta deprecada y si se necesitara planificar ejecución de procesos batch lo haría con airflow
 
@@ -18,6 +22,9 @@ En caso de tener que mover la tabla de origen optaría por spark(pyspark) ya que
 
 Ejercicio 1                
 Realice el DER que de soporte al modelo dimensional solicitado por la banca privada.
+
+![image](https://user-images.githubusercontent.com/63317932/157447080-d5703e99-fd7a-40d3-8f02-81be8f45cbd7.png)
+
  
 
 Ejercicio 2
