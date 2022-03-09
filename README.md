@@ -59,12 +59,13 @@ Teniendo los datos cargados en PostgreSQL:
 			device_movile text not null);
 			
 •	create table factsessiones ( user_id integer references dimusuarios, 
-			       event_id integer references dimevento,  
-                                                    segment_id integer references dimsegmento,
-                                                    sesión_id integer references dimsession, 
-                                                   time_spent integer, 
-                                                   crash_detection text,  
-                                                  constraint pk primary key (user, event_id,segment_id,sesion_id))
+			     event_id integer references dimevento,  
+                             segment_id integer references dimsegmento,
+                             sesión_id integer references dimsession, 
+                             time_spent integer, 
+                             crash_detection text,  
+                             constraint pk primary key (user_id, event_id,segment_id,sesión_id))
+
 						  
 
 •	inserts:
@@ -91,13 +92,14 @@ Pregunta 2
 ¿Qué parámetros de spark tendría en cuenta a la hora de realizar dicha ingesta? Explique brevemente en que consta cada uno de ellos. ¿En qué formato de compresión escribiría los resultados? ¿Por qué?
 
 
-Al momento de realizar dicha ingesta tendría en cuenta la cantidad de ejecutores(spark.executor.instances), la cantidad de memoria utilizada por cada ejecutor(spark.executor.memory), y los núcleos de cada ejecutor (spark.executor.cores) 
-Por otro lado , sobre el formato del archivo, Lo escribiría en formato avro ya que hay relativamente poca cantidad de columnas por lo que ser un formato orientado a filas no es una desventaja , es adecuado para operaciones de escritura intensiva como la que necesitamos y puede ser utilizado en procesos streamming en caso de necesitarlo.
+Al momento de realizar dicha ingesta tendría en cuenta principalmente las configuracioens sobre los ejecutors de spark  y el driver , por nombrar algunos, en relacion a los ejecutors seria la cantidad de ejecutores(spark.executor.instances), la cantidad de memoria utilizada por cada ejecutor(spark.executor.memory), y los núcleos de cada ejecutor (spark.executor.cores) y en relacion al driver la cantidad de memoria a utilizar(spark.driver.memory)
+
+Por otro lado , sobre el formato del archivo, Lo escribiría en formato avro ya que hay relativamente poca cantidad de columnas por lo que ser un formato orientado a filas no es una desventaja , es adecuado para operaciones de escritura intensiva como la que necesitamos y puede ser utilizado en procesos streamming en caso de necesitarlo. en caso de no utilizar avro me inclinaria por el formato parquet.
 
 
 Pregunta 3
 Describa brevemente que implementaría para garantizar la confiabilidad de los datos.
 
-Se forma general se podría decir que implementaría test de calidad de datos, con esto me refiero a someter a diferentes tablas de mi datawarehouse a pruebas para verificar que ,por ejemplo, una columna no tenga nulos.
+hablando en forma general implementaría test de calidad de datos, con esto me refiero a someter a diferentes tablas de mi datawarehouse a pruebas para verificar que ,por ejemplo, una columna no tenga nulos o que sus valores sean unicos en caso de que debieran serlos.
 Una herramienta que se podría utilizar es dbt, es una herramienta que se encarga exclusivamente de la transformación de los datos con la ventaja de que ofrece test automáticos sobre nuestras tablas que aseguran una calidad de datos, sino que además realiza documentación de forma automática de nuestras transformaciones, teniendo así un mayor control del recorrido de nuestro dato incluyendo su origen y las transformaciones que le fueron aplicadas. Es una herramienta open Source que tiene conexiones nativas con herramientas como redshift , snowflake o bigquery.
 Otras alternativas que se podrían estudiar, ya sin modificar mucho la arquitectura, serian librerías como lo es pydeequ, la cual es una librería de python para asegurar la calidad de los datos, misma función que mencione anteriormente por ejemplo encontrar valores nulos, distribuciones de datos incorrectas ,etc. Tambien podría mencionar “great_expectation” que es otra librería de python que cumple una función similar.
